@@ -1,7 +1,8 @@
+
 # **Webapp**
 
 ### **Description**
-This project provides a comprehensive guide to deploying a simple web application on AWS EC2 using GitHub, Node.js, and CodeDeploy. The guide includes setting up an EC2 instance, cloning a GitHub repository, installing necessary dependencies, configuring the CodeDeploy agent, and deploying an Express.js application. It also covers creating deployment scripts and setting up AWS CodeBuild for continuous integration to automate the deployment process.
+This project provides a comprehensive guide to deploying a simple web application on AWS EC2 using GitHub, Node.js, and CodeDeploy. The guide includes setting up an EC2 instance, cloning a GitHub repository, installing necessary dependencies, configuring the CodeDeploy agent, and deploying an Express.js application. It also covers creating deployment scripts, setting up AWS CodeBuild for continuous integration, and automating the deployment process.
 
 ### **Tags**
 - AWS EC2
@@ -24,15 +25,15 @@ This project provides a comprehensive guide to deploying a simple web applicatio
 
 2. **Clone the GitHub Repository**
    ```bash
-   git clone https://github.com/atulkamble/webapp
+   git clone https://github.com/Gauravsingh7720/webapp.git
    cd webapp
    ```
 
 3. **Install Git and Configure User Details**
    ```bash
    sudo yum install git -y
-   git config --global user.name "Atul Kamble"
-   git config --global user.email "atul_kamble@hotmail.com"
+   git config --global user.name "Gaurav"
+   git config --global user.email "grv.rajpur@gmail.com"
    ```
 
 4. **Update EC2 Instance and Install Required Packages**
@@ -112,13 +113,47 @@ This project provides a comprehensive guide to deploying a simple web applicatio
      git push origin main
      ```
 
-9. **Set Up CodeBuild (Optional for CI/CD)**
+9. **Set Up CodeBuild for Continuous Integration**
    - Create and edit the `buildspec.yml` file:
      ```bash
      sudo touch buildspec.yml
      sudo nano buildspec.yml
      ```
 
----
+   - **`buildspec.yml`** for building the Node.js application and pushing the artifact to S3:
+     ```yaml
+     version: 0.2
+     phases:
+       install:
+         commands:
+           - echo Installing dependencies...
+           - npm install
+       build:
+         commands:
+           - echo Building the application...
+           - zip -r webapp.zip .
+       post_build:
+         commands:
+           - echo Uploading artifact to S3...
+           - aws s3 cp webapp.zip s3://your-s3-bucket-name/webapp.zip
+     artifacts:
+       files:
+         - webapp.zip
+     ```
 
-This `README.md` outlines all the key steps for deploying the web application using AWS services and GitHub. Let me know if any updates are needed!
+   - After creating the `buildspec.yml`, push it to the GitHub repository.
+
+10. **Set Up CodeDeploy for Deployment**
+    - Create a **CodeDeploy Application** and **Deployment Group** in the AWS Management Console.
+    - Configure CodeDeploy to pull the artifact from the S3 bucket (uploaded by CodeBuild).
+    - **Deploy the Artifact** using the CodeDeploy agent, which will copy the files from the S3 bucket and deploy them to the EC2 instance.
+
+11. **Triggering the CI/CD Pipeline**
+    - Whenever changes are pushed to the GitHub repository, AWS CodeBuild will automatically start the build process.
+    - Once the build is completed, CodeBuild will upload the artifact to S3, and CodeDeploy will automatically pick it up to deploy the new version of the application to the EC2 instance.
+
+12. **Access the Application Again**
+    - After the deployment process is complete, visit the EC2 instance public IP again to verify the deployment:
+      ```
+      http://184.72.68.27:3000/
+      ```
