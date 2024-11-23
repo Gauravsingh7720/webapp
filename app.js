@@ -1,11 +1,12 @@
 const express = require('express');
-   const app = express();
-   const port = 3000;
+const app = express();
+const port = 3000;
 
-   app.get('/', (req, res) => {
-     res.send('Hello, World! Update');
-   });
+app.get('/', (req, res) => {
+  res.send('Hello, World! Update');
+});
 
-   app.listen(port, () => {
-     console.log(`App is running on http://localhost:${port}`);
-   });
+// Bind to 0.0.0.0 instead of localhost
+app.listen(port, '0.0.0.0', () => {
+  console.log(`App is running on http://0.0.0.0:${port}`);
+});
