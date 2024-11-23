@@ -3,7 +3,7 @@ const app = express();
 const port = 3000;
 
 app.get('/', (req, res) => {
-  res.send('Hello, FROM Gaurav!!!');
+  res.send('Hello, from Gaurav!!!');
 });
 
 // Bind to 0.0.0.0 instead of localhost
